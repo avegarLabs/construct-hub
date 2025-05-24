@@ -15,5 +15,5 @@ public class ObraListItem {
     private Long id;
     private String codigo;
     private String descripcion;
-    private Set<EmpresaDTO> empresas;
+    private Set<EmpresaListItem> empresas;
 }
