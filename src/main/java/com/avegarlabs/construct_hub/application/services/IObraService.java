@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IObraService {
 
-    ObraListItem save(ObraDTO dto);
+    ObraListItem persist(ObraDTO dto);
 
     ObraListItem update(Long obraId, ObraDTO dto);
 

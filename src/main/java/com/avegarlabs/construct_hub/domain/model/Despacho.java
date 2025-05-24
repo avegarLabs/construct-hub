@@ -9,10 +9,11 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "despachos")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 public class Despacho {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

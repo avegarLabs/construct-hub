@@ -1,5 +1,6 @@
 package com.avegarlabs.construct_hub.domain.model;
 
+import com.avegarlabs.construct_hub.application.dto.EmpresaDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,10 +10,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "empresas")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 public class Empresa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,4 +29,9 @@ public class Empresa {
     @ToString.Exclude
     @Builder.Default
     private Set<Obra> obras = new HashSet<>();
+
+    public void setDataFromDto(EmpresaDTO dto){
+        codigo = dto.getCodigo();
+        nombre = dto.getNombre();
+    }
 }

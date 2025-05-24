@@ -6,10 +6,11 @@ import com.avegarlabs.construct_hub.application.dto.ObraListItem;
 import com.avegarlabs.construct_hub.domain.model.Empresa;
 import com.avegarlabs.construct_hub.domain.model.Obra;
 import com.avegarlabs.construct_hub.domain.repositories.ObraRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,15 +18,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@NoArgsConstructor(force = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ObraServiceImp implements IObraService {
 
     private final ObraRepository obraRepository;
-    private final EmpresaServiceImp empresaService;
+    private final IEmpresaService empresaService;
 
     @Override
-    public ObraListItem save(ObraDTO dto) {
+    public ObraListItem persist(ObraDTO dto) {
         Obra obra = mapperDtoToEntity(dto);
         obraRepository.save(obra);
         return mapperEntityToListItem(obra);
@@ -52,10 +52,10 @@ public class ObraServiceImp implements IObraService {
 
 
     @Override
+    @Transactional
     public List<ObraListItem> listObras() {
-        return obraRepository.findAll().stream().map(this::mapperEntityToListItem).toList();
-
-
+        List<Obra> obras = obraRepository.findAll();
+        return obras.stream().map(this::mapperEntityToListItem).toList();
     }
 
     @Override
@@ -76,7 +76,7 @@ public class ObraServiceImp implements IObraService {
     }
 
     private ObraListItem mapperEntityToListItem(Obra obra){
-        Set<EmpresaListItem> empresaListItems = obra.getEmpresas().stream().map(empresa -> empresaService.mapperEntityToListItem(empresa)).collect(Collectors.toSet());
+      Set<EmpresaListItem> empresaListItems = obra.getEmpresas().stream().map(empresaService::mapperEmpToListItem).collect(Collectors.toSet());
        return ObraListItem.builder()
                .codigo(obra.getCodigo())
                .descripcion(obra.getDescripcion())

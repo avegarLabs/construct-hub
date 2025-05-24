@@ -5,10 +5,11 @@ import lombok.*;
 
 @Entity
 @Table(name = "objetos")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 public class Objeto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

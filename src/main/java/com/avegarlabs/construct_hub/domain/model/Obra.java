@@ -10,10 +10,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "obras")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 public class Obra {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

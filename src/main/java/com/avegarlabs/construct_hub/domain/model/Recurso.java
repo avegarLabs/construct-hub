@@ -1,19 +1,17 @@
 package com.avegarlabs.construct_hub.domain.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "recursos")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 public class Recurso {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
