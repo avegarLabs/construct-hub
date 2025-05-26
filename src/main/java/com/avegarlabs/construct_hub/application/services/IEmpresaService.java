@@ -22,4 +22,6 @@ public interface IEmpresaService {
     Set<Empresa> getEmpresasByIds(Set<Long> empresaIds);
 
     EmpresaListItem mapperEmpToListItem(Empresa empresa);
+
+    Empresa getEntity(Long empresaId);
 }

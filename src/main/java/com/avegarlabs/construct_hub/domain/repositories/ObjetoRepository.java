@@ -8,6 +8,5 @@ import java.util.List;
 
 @Repository
 public interface ObjetoRepository extends JpaRepository<Objeto, Long> {
-
     List<Objeto> getObjetoByObraId(Long obraId);
 }

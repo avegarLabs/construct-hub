@@ -64,6 +64,10 @@ public class ObraServiceImp implements IObraService {
         return mapperEntityToListItem(obra);
     }
 
+    @Override
+    public Obra getEntity(Long obraId) {
+        return obraRepository.getReferenceById(obraId);
+    }
 
 
     private Obra mapperDtoToEntity(ObraDTO obraDTO){

@@ -74,6 +74,12 @@ public class EmpresaServiceImp implements IEmpresaService {
                 .id(empresa.getId())
                 .build();
     }
+
+    @Override
+    public Empresa getEntity(Long empresaId) {
+        return empresaRepository.getReferenceById(empresaId);
+    }
+
     private Empresa mapperEntityToDto(EmpresaDTO empresaDTO){
         return  Empresa.builder()
                 .codigo(empresaDTO.getCodigo())

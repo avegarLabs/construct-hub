@@ -3,6 +3,7 @@ package com.avegarlabs.construct_hub.application.dto;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -12,10 +13,11 @@ public class DespachoListItem {
     private Long id;
     private String codigo;
     private BigDecimal cantidadDespachada;
+    private LocalDateTime fecha;
 
-    private ObraDTO obra;
-    private EmpresaDTO empresa;
-    private ObjetoDTO objeto;
-    private RecursoDTO recurso;
+    private ObraListItem obra;
+    private EmpresaListItem empresa;
+    private ObjetoListItem objeto;
+    private RecursoListItem recurso;
 }
 
