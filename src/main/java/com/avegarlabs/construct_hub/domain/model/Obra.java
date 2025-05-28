@@ -39,4 +39,9 @@ public class Obra {
     @ToString.Exclude
     @Builder.Default
     private List<Objeto> objetos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "obra", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @Builder.Default
+    private List<Recurso> recursos = new ArrayList<>();
 }

@@ -46,6 +46,12 @@ public class RecusosController {
         return ResponseEntity.ok(recursos);
     }
 
+    @GetMapping("/obra/{obraId}")
+    public ResponseEntity<List<RecursoListItem>> getAllRecursoByObra(@PathVariable Long obraId) {
+        List<RecursoListItem> recursos = service.listRecursosByObra(obraId);
+        return ResponseEntity.ok(recursos);
+    }
+
     @GetMapping("/{recId}")
     public ResponseEntity<RecursoListItem> getrecursosById(@PathVariable Long recId) {
         RecursoListItem recursoListItem = service.findByrecursoById(recId);

@@ -20,6 +20,8 @@ public interface IRecursosService {
 
     List<RecursoListItem> listRecursos();
 
+    List<RecursoListItem> listRecursosByObra(Long obraId);
+
     RecursoListItem findByrecursoById(Long recursoId);
 
     Recurso getEntity(Long recursoId);

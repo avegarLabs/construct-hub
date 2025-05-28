@@ -14,5 +14,6 @@ public class RecursoDTO {
     private String um;
     private BigDecimal cantidad;
     private BigDecimal precio;
+    private Long obraId;
 
 }

@@ -2,7 +2,9 @@ package com.avegarlabs.construct_hub.application.services;
 
 import com.avegarlabs.construct_hub.application.dto.RecursoDTO;
 import com.avegarlabs.construct_hub.application.dto.RecursoListItem;
+import com.avegarlabs.construct_hub.domain.model.Obra;
 import com.avegarlabs.construct_hub.domain.model.Recurso;
+import com.avegarlabs.construct_hub.domain.repositories.ObraRepository;
 import com.avegarlabs.construct_hub.domain.repositories.RecursoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,11 +18,14 @@ import java.util.List;
 public class RecursoServiceImp implements IRecursosService {
 
     private final RecursoRepository repository;
+    private final ObraRepository obraRepository;
 
     @Override
     public RecursoListItem persist(RecursoDTO dto) {
+        Obra obra =  obraRepository.getReferenceById(dto.getObraId());
         Recurso recurso = new Recurso();
         recurso.setDataFromDto(dto);
+        recurso.setObra(obra);
         repository.save(recurso);
         return mappEntityToListItem(recurso);
     }
@@ -46,6 +51,11 @@ public class RecursoServiceImp implements IRecursosService {
     @Override
     public List<RecursoListItem> listRecursos() {
         return repository.findAll().stream().map(this::mappEntityToListItem).toList();
+    }
+
+    @Override
+    public List<RecursoListItem> listRecursosByObra(Long obraId) {
+        return repository.findAllByObraId(obraId).stream().map(this::mappEntityToListItem).toList();
     }
 
     @Override

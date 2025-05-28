@@ -24,6 +24,11 @@ public class Recurso {
     private BigDecimal cantidad;
     private BigDecimal precio;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "obra_id")
+    @ToString.Exclude
+    private Obra obra;
+
     public void setDataFromDto(RecursoDTO dto) {
         codigo = dto.getCodigo();
         descripcion = dto.getDescripcion();
