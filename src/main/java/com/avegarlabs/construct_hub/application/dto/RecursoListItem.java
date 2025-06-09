@@ -15,5 +15,6 @@ public class RecursoListItem {
     private String um;
     private BigDecimal cantidad;
     private BigDecimal precio;
+    private BigDecimal disponible;
 
 }

@@ -53,8 +53,8 @@ public class ObjetosController {
     }
 
     @GetMapping("/obra/{obraId}")
-    public ResponseEntity<List<ObjetoListItem>> getObjetoByObraId(@PathVariable Long objId) {
-        List<ObjetoListItem> objetoListItems = service.findObjetosByObraId(objId);
+    public ResponseEntity<List<ObjetoListItem>> getObjetoByObraId(@PathVariable Long obraId) {
+        List<ObjetoListItem> objetoListItems = service.findObjetosByObraId(obraId);
         return ResponseEntity.ok(objetoListItems);
     }
 }

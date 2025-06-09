@@ -1,17 +1,22 @@
 package com.avegarlabs.construct_hub.application.services;
 
-import com.avegarlabs.construct_hub.application.dto.DespachoDTO;
-import com.avegarlabs.construct_hub.application.dto.DespachoListItem;
-import com.avegarlabs.construct_hub.application.dto.ObjetoDTO;
-import com.avegarlabs.construct_hub.application.dto.ObjetoListItem;
+import com.avegarlabs.construct_hub.application.dto.*;
 
 import java.util.List;
 
 public interface IDespachosService {
 
-    DespachoListItem persist(DespachoDTO dto);
+    ValesListItemDTO persist(ValesDTO dto);
 
-    DespachoListItem update(Long despId, DespachoDTO dto);
+    List<ValesListItemDTO> listDespachos();
+
+    Boolean deleteDespacho(Long objId);
+    Boolean deleteVale(Long objId);
+    List<ValesListItemDTO> findDespachosByObraId(Long idObj);
+    List<ValesListItemDTO> findDespachosByEmpresaId(Long idObj);
+    List<ValesListItemDTO> findDespachosByObjetosId(Long idObj);
+
+   /*DespachoListItem update(Long despId, DespachoDTO dto);
 
     Boolean deleteDespacho(Long objId);
 
@@ -22,5 +27,5 @@ public interface IDespachosService {
     List<DespachoListItem> findDespachosByObjetosId(Long idObj);
     List<DespachoListItem> findDespachosByRecursoId(Long idObj);
 
-    DespachoListItem findByDespachoId(Long objetoId);
+    DespachoListItem findByDespachoId(Long objetoId);*/
 }

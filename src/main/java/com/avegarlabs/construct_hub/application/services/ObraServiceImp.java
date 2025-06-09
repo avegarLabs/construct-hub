@@ -10,7 +10,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -69,6 +68,28 @@ public class ObraServiceImp implements IObraService {
         return obraRepository.getReferenceById(obraId);
     }
 
+    @Override
+    public ObraListItem addEmpresa(Long obraId, Set<Long> empIds) {
+        Obra obra = obraRepository.getReferenceById(obraId);
+        if(obra != null){
+            Set<Empresa> empresas = empresaService.getEmpresasByIds(empIds);
+            obra.getEmpresas().addAll(empresas);
+            obraRepository.save(obra);
+        }
+        return mapperEntityToListItem(obra);
+    }
+
+    @Override
+    public ObraListItem deleteEmpresa(Long obraId, Long empId) {
+        Obra obra = obraRepository.getReferenceById(obraId);
+        if(obra != null){
+            Empresa empresa = empresaService.getEntity(empId);
+            obra.getEmpresas().remove(empresa);
+            obraRepository.save(obra);
+        }
+        return mapperEntityToListItem(obra);
+    }
+
 
     private Obra mapperDtoToEntity(ObraDTO obraDTO){
        Set<Empresa> empresas = empresaService.getEmpresasByIds(obraDTO.getEmpresasId());
@@ -90,10 +111,8 @@ public class ObraServiceImp implements IObraService {
     }
 
     private Obra setDataFromDto(Obra obra, ObraDTO obraDTO){
-        Set<Empresa> empresas = empresaService.getEmpresasByIds(obraDTO.getEmpresasId());
         obra.setCodigo(obraDTO.getCodigo());
         obra.setDescripcion(obraDTO.getDescripcion());
-        obra.setEmpresas(empresas);
         return obra;
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/recursos")
+    @RequestMapping("/api/recursos")
 @RequiredArgsConstructor
 public class RecusosController {
 
@@ -25,10 +25,10 @@ public class RecusosController {
 
     @PutMapping("/{recId}")
     public ResponseEntity<RecursoListItem> updateRecurso(
-            @PathVariable Long empId,
+            @PathVariable Long recId,
             @RequestBody RecursoDTO dto
     ) {
-        RecursoListItem response = service.update(empId, dto);
+        RecursoListItem response = service.update(recId, dto);
         return ResponseEntity.ok(response);
     }
 

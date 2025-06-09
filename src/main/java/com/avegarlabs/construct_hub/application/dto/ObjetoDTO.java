@@ -9,5 +9,5 @@ import lombok.*;
 public class ObjetoDTO {
     private String codigo;
     private String descripcion;
-    private Long ObraId;
+    private Long obraId;
 }

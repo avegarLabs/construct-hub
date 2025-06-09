@@ -7,11 +7,6 @@ import java.util.List;
 
 public interface DespachoRepository extends JpaRepository<Despacho, Long> {
 
-    List<Despacho> getDespachosByObraId(Long obraId);
-    List<Despacho> getDespachosByEmpresaId(Long empresaId);
-
-    List<Despacho> getDespachosByObjetoId(Long objetoId);
-
     List<Despacho> getDespachosByRecursoId(Long recursoId);
 
 }

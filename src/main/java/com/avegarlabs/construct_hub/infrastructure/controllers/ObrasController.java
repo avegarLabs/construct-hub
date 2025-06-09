@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/obras")
@@ -47,8 +48,24 @@ public class ObrasController {
     }
 
     @GetMapping("/{obraId}")
-    public ResponseEntity<ObraListItem> getObraById(@PathVariable Long obraId) {
+    public ResponseEntity<?> addEmpresaToObra(@PathVariable Long obraId) {
         ObraListItem obra = obraService.findByObraId(obraId);
+        if (obra == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Obra no encontrada con ID: " + obraId);
+        }
         return ResponseEntity.ok(obra);
     }
+
+    @PutMapping("/add/{obraId}")
+     public ResponseEntity<ObraListItem> addEmpresasToObra(@PathVariable Long obraId, @RequestBody Set<Long> ids) {
+     ObraListItem obra = obraService.addEmpresa(obraId, ids);
+     return ResponseEntity.ok(obra);
+     }
+     @GetMapping("/removeIn/{obraId}/emp/{empId}")
+     public ResponseEntity<ObraListItem> getObraById(@PathVariable Long obraId, @PathVariable Long empId) {
+     ObraListItem obra = obraService.deleteEmpresa(obraId, empId);
+     return ResponseEntity.ok(obra);
+     }
+
 }

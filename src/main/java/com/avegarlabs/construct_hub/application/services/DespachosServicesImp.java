@@ -3,6 +3,7 @@ package com.avegarlabs.construct_hub.application.services;
 import com.avegarlabs.construct_hub.application.dto.*;
 import com.avegarlabs.construct_hub.domain.model.*;
 import com.avegarlabs.construct_hub.domain.repositories.DespachoRepository;
+import com.avegarlabs.construct_hub.domain.repositories.ValeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -15,24 +16,38 @@ import java.util.List;
 public class DespachosServicesImp implements IDespachosService {
 
     private final DespachoRepository repository;
+    private final ValeRepository valeRepository;
     private final IObraService obraService;
     private final IRecursosService recursosService;
     private final IEmpresaService empresaService;
     private final IObjetoService objetoService;
 
     @Override
-    public DespachoListItem persist(DespachoDTO dto) {
-        Despacho despacho = mapDtoToEntity(dto);
-        repository.save(despacho);
-        return mapEntityToListItem(despacho);
+    public ValesListItemDTO persist(ValesDTO dto) {
+        Vale vale = mapDtoToEntity(dto);
+        vale = valeRepository.save(vale);
+
+        Vale finalVale = vale;
+        List<Despacho> despachos = dto.getDespachos().stream()
+                .map(despachoDTO -> {
+                    Despacho despacho = mapDespachoDtoToEntity(despachoDTO);
+                    despacho.setVale(finalVale);
+                    return repository.save(despacho);
+                })
+                .toList();
+        finalVale.setDespachos(despachos);
+        return mapEntityToListItem(finalVale);
     }
 
     @Override
-    public DespachoListItem update(Long despId, DespachoDTO dto) {
-        Despacho despacho = repository.getReferenceById(despId);
-        Despacho update = setDataToEntity(despacho, dto);
-        repository.save(update);
-        return mapEntityToListItem(update);
+    public List<ValesListItemDTO> listDespachos() {
+        List<Vale> valeList =  valeRepository.getValeByActive(true);
+       /* System.out.println(valeList.size());
+        for (Vale vale : valeList) {
+            System.out.println("Vale: " + vale.getCodigo());
+            System.out.println("Objeto: " + (vale.getObjeto() != null ? vale.getObjeto().getCodigo() : "NULL"));
+        }*/
+        return valeList.stream().map(this::mapEntityToListItem).toList();
     }
 
     @Override
@@ -46,78 +61,80 @@ public class DespachosServicesImp implements IDespachosService {
     }
 
     @Override
-    public List<DespachoListItem> listDespachos() {
-        return repository.findAll().stream().map(this::mapEntityToListItem).toList();
+    public Boolean deleteVale(Long objId) {
+        try {
+            Vale vale = valeRepository.getReferenceById(objId);
+            vale.setActive(false);
+            valeRepository.save(vale);
+            return true;
+        } catch (EmptyResultDataAccessException | DataIntegrityViolationException e) {
+            return false;
+        }
     }
 
     @Override
-    public List<DespachoListItem> findDespachosByObraId(Long idObr) {
-        return repository.getDespachosByObraId(idObr).stream().map(this::mapEntityToListItem).toList();
+    public List<ValesListItemDTO> findDespachosByObraId(Long idObra) {
+        return valeRepository.getValesByObraId(idObra).stream().map(this::mapEntityToListItem).toList();
     }
 
     @Override
-    public List<DespachoListItem> findDespachosByEmpresaId(Long idEmp) {
-        return repository.getDespachosByEmpresaId(idEmp).stream().map(this::mapEntityToListItem).toList();
+    public List<ValesListItemDTO> findDespachosByEmpresaId(Long idEmp) {
+        return valeRepository.getValeByEmpresaId(idEmp).stream().map(this::mapEntityToListItem).toList();
     }
 
     @Override
-    public List<DespachoListItem> findDespachosByObjetosId(Long idObj) {
-        return repository.getDespachosByObjetoId(idObj).stream().map(this::mapEntityToListItem).toList();
+    public List<ValesListItemDTO> findDespachosByObjetosId(Long idObj) {
+        return valeRepository.getValesByObjetoId(idObj).stream().map(this::mapEntityToListItem).toList();
     }
 
-    @Override
-    public List<DespachoListItem> findDespachosByRecursoId(Long idRec) {
-        return repository.getDespachosByRecursoId(idRec).stream().map(this::mapEntityToListItem).toList();
-    }
 
-    @Override
-    public DespachoListItem findByDespachoId(Long despId) {
-        return mapEntityToListItem(repository.getReferenceById(despId));
-    }
-
-    private Despacho mapDtoToEntity(DespachoDTO dto){
+    private Vale mapDtoToEntity(ValesDTO dto){
         Obra obra = obraService.getEntity(dto.getObraId());
         Empresa empresa = empresaService.getEntity(dto.getEmpresaId());
         Objeto objeto = objetoService.getEntity(dto.getObjetoId());
-        Recurso recurso = recursosService.getEntity(dto.getRecursoId());
-        return Despacho.builder()
-                .cantidadDespachada(dto.getCantidadDespachada())
+        return Vale.builder()
                 .codigo(dto.getCodigo())
-                .recurso(recurso)
                 .empresa(empresa)
                 .objeto(objeto)
                 .obra(obra)
                 .build();
     }
 
-    private DespachoListItem mapEntityToListItem(Despacho despacho){
-        ObraListItem obra = obraService.findByObraId(despacho.getObra().getId());
-        EmpresaListItem empresa = empresaService.findByEmpresaById(despacho.getEmpresa().getId());
-        ObjetoListItem objeto = objetoService.findByObjetoId(despacho.getObjeto().getId());
-        RecursoListItem recurso = recursosService.findByrecursoById(despacho.getRecurso().getId());
-        return DespachoListItem.builder()
+    private Despacho mapDespachoDtoToEntity(DespachoDTO despachoDTO){
+        Recurso recurso = recursosService.getEntity(despachoDTO.getRecursoId());
+        return Despacho.builder()
+                .recurso(recurso)
+                .cantidadDespachada(despachoDTO.getCantidadDespachada())
+                .build();
+    }
+
+
+
+    private ValesListItemDTO mapEntityToListItem(Vale vale){
+        ObraListItem obra = obraService.findByObraId(vale.getObra().getId());
+        EmpresaListItem empresa = empresaService.findByEmpresaById(vale.getEmpresa().getId());
+        ObjetoListItem objeto = objetoService.findByObjetoId(vale.getObjeto().getId());
+        List<DespachoListItemDTO> despachoListItemDTOS = vale.getDespachos().stream().map(this::mapDespEntityToDto).toList();
+        return ValesListItemDTO.builder()
+                .id(vale.getId())
+                .codigo(vale.getCodigo())
+                .empresa(empresa)
+                .objeto(objeto)
+                .fecha(vale.getFecha())
+                .obra(obra)
+                .despachos(despachoListItemDTOS)
+                .build();
+    }
+
+    private DespachoListItemDTO mapDespEntityToDto(Despacho despacho){
+        RecursoListItem recursoListItem = recursosService.findByrecursoById(despacho.getRecurso().getId());
+        return DespachoListItemDTO.builder()
                 .id(despacho.getId())
-                .codigo(despacho.getCodigo())
+                .recurso(recursoListItem)
                 .cantidadDespachada(despacho.getCantidadDespachada())
-                .empresa(empresa)
-                .objeto(objeto)
-                .fecha(despacho.getFecha())
-                .obra(obra)
-                .recurso(recurso)
                 .build();
     }
 
-    private Despacho setDataToEntity(Despacho despacho, DespachoDTO dto){
-        Obra obra = obraService.getEntity(dto.getObraId());
-        Empresa empresa = empresaService.getEntity(dto.getEmpresaId());
-        Objeto objeto = objetoService.getEntity(dto.getObjetoId());
-        Recurso recurso = recursosService.getEntity(dto.getRecursoId());
-        despacho.setCodigo(dto.getCodigo());
-        despacho.setCantidadDespachada(dto.getCantidadDespachada());
-        despacho.setObjeto(objeto);
-        despacho.setObra(obra);
-        despacho.setEmpresa(empresa);
-        despacho.setRecurso(recurso);
-        return despacho;
-    }
+
+
 }

@@ -26,6 +26,10 @@ public class Objeto {
     @ToString.Exclude
     private Obra obra;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "objeto_id")
+    private Objeto objeto;
+
     public void setDataFromDto(ObjetoDTO dto){
         codigo = dto.getCodigo();
         descripcion = dto.getDescripcion();

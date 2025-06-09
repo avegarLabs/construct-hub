@@ -2,8 +2,10 @@ package com.avegarlabs.construct_hub.application.services;
 
 import com.avegarlabs.construct_hub.application.dto.RecursoDTO;
 import com.avegarlabs.construct_hub.application.dto.RecursoListItem;
+import com.avegarlabs.construct_hub.domain.model.Despacho;
 import com.avegarlabs.construct_hub.domain.model.Obra;
 import com.avegarlabs.construct_hub.domain.model.Recurso;
+import com.avegarlabs.construct_hub.domain.repositories.DespachoRepository;
 import com.avegarlabs.construct_hub.domain.repositories.ObraRepository;
 import com.avegarlabs.construct_hub.domain.repositories.RecursoRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +13,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -19,6 +22,7 @@ public class RecursoServiceImp implements IRecursosService {
 
     private final RecursoRepository repository;
     private final ObraRepository obraRepository;
+    private final DespachoRepository despachoRepository;
 
     @Override
     public RecursoListItem persist(RecursoDTO dto) {
@@ -69,12 +73,16 @@ public class RecursoServiceImp implements IRecursosService {
     }
 
     private RecursoListItem mappEntityToListItem(Recurso recurso) {
+        Double despachos = despachoRepository.getDespachosByRecursoId(recurso.getId()).stream().filter(item -> item.getVale().getActive()).map(item -> item.getCantidadDespachada().doubleValue()).reduce(0.0, Double::sum);
+        Double disponible = recurso.getCantidad().doubleValue() - despachos;
         return RecursoListItem.builder()
                 .id(recurso.getId())
+                .codigo(recurso.getCodigo())
                 .cantidad(recurso.getCantidad())
                 .um(recurso.getUm())
                 .precio(recurso.getPrecio())
                 .descripcion(recurso.getDescripcion())
+                .disponible(new BigDecimal(disponible))
                 .build();
     }
 }

@@ -4,12 +4,11 @@ import com.avegarlabs.construct_hub.domain.model.Despacho;
 import com.avegarlabs.construct_hub.domain.model.Empresa;
 import com.avegarlabs.construct_hub.domain.model.Objeto;
 import com.avegarlabs.construct_hub.domain.model.Obra;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +16,10 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DespachoDTO {
-    private Long recursoId;
-    private BigDecimal cantidadDespachada;
+public class ValesDTO {
+    private String codigo;
+    private Long obraId;
+    private Long empresaId;
+    private Long objetoId;
+    private List<DespachoDTO> despachos;
 }

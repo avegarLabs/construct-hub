@@ -65,7 +65,9 @@ public class ObjetoServiceImp implements IObjetoService{
 
     @Override
     public ObjetoListItem findByObjetoId(Long objetoId) {
-        return null;
+        return mappEntiyToListItem(repository.getReferenceById(objetoId));
+
+
     }
 
     @Override
