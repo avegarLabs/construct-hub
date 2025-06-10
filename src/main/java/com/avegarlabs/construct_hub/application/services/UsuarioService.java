@@ -49,4 +49,8 @@ public class UsuarioService implements UserDetailsService {
 
         return usuarioRepository.save(usuario);
     }
+
+    public boolean existeUsuarioByUsername(String username) {
+        return usuarioRepository.existsByUsername(username);
+    }
 }

@@ -18,18 +18,20 @@ public class ConstructHubApplication {
 		SpringApplication.run(ConstructHubApplication.class, args);
 	}
 
-	/*
+
 	@Bean
 	CommandLineRunner init(UsuarioService usuarioService, PasswordEncoder passwordEncoder) {
 		return args -> {
-			    SignupRequest admin = new SignupRequest();
+	     if(!usuarioService.existeUsuarioByUsername("admin")) {
+				SignupRequest admin = new SignupRequest();
 				admin.setUsername("admin");
 				admin.setEmail("vegaramirezalfredo@gmail.com");
-				admin.setPassword("admin");
+				admin.setPassword(passwordEncoder.encode("admin"));
 				admin.setRol(Usuario.Rol.ADMIN);
 				admin.setCargo("Administrador del Sistema");
 				usuarioService.crearUsuario(admin);
+			}
 		};
-	}*/
+	}
 
 }
