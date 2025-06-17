@@ -71,6 +71,7 @@ public class SecurityConfig {
                 "Authorization",
                 "Content-Type",
                 "Accept",
+                "Origin",
                 "X-Requested-With"
         ));
         configuration.setExposedHeaders(Arrays.asList("Authorization")); // Exponer el header de autenticación
