@@ -10,7 +10,10 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://construct-hub-app:4200")
+                .allowedOrigins(
+                        "http://localhost:4200",  // Para desarrollo local
+                        "http://construct-hub-app:4200"  // Para Docker
+                )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true)
