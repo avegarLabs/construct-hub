@@ -20,13 +20,13 @@ public class ConstructHubApplication {
 
 
 	@Bean
-	CommandLineRunner init(UsuarioService usuarioService, PasswordEncoder passwordEncoder) {
+	CommandLineRunner init(UsuarioService usuarioService) {
 		return args -> {
-	     if(!usuarioService.existeUsuarioByUsername("admin")) {
+			if (!usuarioService.existeUsuarioByUsername("admin")) {
 				SignupRequest admin = new SignupRequest();
 				admin.setUsername("admin");
 				admin.setEmail("vegaramirezalfredo@gmail.com");
-				admin.setPassword(passwordEncoder.encode("admin"));
+				admin.setPassword("admin"); // ← SIN codificar
 				admin.setRol(Usuario.Rol.ADMIN);
 				admin.setCargo("Administrador del Sistema");
 				usuarioService.crearUsuario(admin);
