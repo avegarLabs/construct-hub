@@ -12,7 +12,8 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                         "http://localhost:4200",  // Para desarrollo local
-                        "http://construct-hub-app:4200"  // Para Docker
+                        "http://construct-hub-app:4200",// Para Docker
+                        "http://contruct-hub.vertice.com.cu:4200" // Red Vertice
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
