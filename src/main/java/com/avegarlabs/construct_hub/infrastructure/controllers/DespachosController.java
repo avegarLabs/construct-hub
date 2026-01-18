@@ -1,5 +1,6 @@
 package com.avegarlabs.construct_hub.infrastructure.controllers;
 
+import com.avegarlabs.construct_hub.application.dto.CodigoDespachoDTO;
 import com.avegarlabs.construct_hub.application.dto.ValesDTO;
 import com.avegarlabs.construct_hub.application.dto.ValesListItemDTO;
 import com.avegarlabs.construct_hub.application.services.IDespachosService;
@@ -27,6 +28,23 @@ public class DespachosController {
     public ResponseEntity<List<ValesListItemDTO>> getAllDespachos() {
         List<ValesListItemDTO> objetos = service.listDespachos();
         return ResponseEntity.ok(objetos);
+    }
+
+    /**
+     * Genera el siguiente código de despacho disponible de forma automática.
+     *
+     * Este endpoint es thread-safe y garantiza que no se generen códigos duplicados
+     * incluso cuando múltiples usuarios crean despachos simultáneamente.
+     *
+     * @return CodigoDespachoDTO con el código generado en formato DSP-YYYY-XXXXX
+     */
+    @GetMapping("/next-code")
+    public ResponseEntity<CodigoDespachoDTO> generateNextCode() {
+        String codigo = service.generateNextCode();
+        CodigoDespachoDTO response = CodigoDespachoDTO.builder()
+                .codigo(codigo)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/despachp/{dId}")

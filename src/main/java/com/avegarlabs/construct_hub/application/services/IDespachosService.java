@@ -10,6 +10,14 @@ public interface IDespachosService {
 
     List<ValesListItemDTO> listDespachos();
 
+    /**
+     * Genera el siguiente código de despacho disponible de forma automática.
+     * Formato: DSP-YYYY-XXXXX
+     *
+     * @return Código de despacho único
+     */
+    String generateNextCode();
+
     Boolean deleteDespacho(Long objId);
     Boolean deleteVale(Long objId);
     List<ValesListItemDTO> findDespachosByObraId(Long idObj);

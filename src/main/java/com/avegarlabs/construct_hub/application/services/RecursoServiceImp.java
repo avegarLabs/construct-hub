@@ -1,5 +1,6 @@
 package com.avegarlabs.construct_hub.application.services;
 
+import com.avegarlabs.construct_hub.application.dto.ImportResultDTO;
 import com.avegarlabs.construct_hub.application.dto.RecursoDTO;
 import com.avegarlabs.construct_hub.application.dto.RecursoListItem;
 import com.avegarlabs.construct_hub.domain.model.Despacho;
@@ -12,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -23,6 +26,7 @@ public class RecursoServiceImp implements IRecursosService {
     private final RecursoRepository repository;
     private final ObraRepository obraRepository;
     private final DespachoRepository despachoRepository;
+    private final ExcelImportService excelImportService;
 
     @Override
     public RecursoListItem persist(RecursoDTO dto) {
@@ -70,6 +74,11 @@ public class RecursoServiceImp implements IRecursosService {
     @Override
     public Recurso getEntity(Long recursoId) {
         return repository.getReferenceById(recursoId);
+    }
+
+    @Override
+    public ImportResultDTO importRecursosFromExcel(MultipartFile file, Long obraId) throws IOException {
+        return excelImportService.importRecursosFromExcel(file, obraId);
     }
 
     private RecursoListItem mappEntityToListItem(Recurso recurso) {

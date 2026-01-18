@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Year;
 import java.util.List;
 
 @Service
@@ -41,12 +43,8 @@ public class DespachosServicesImp implements IDespachosService {
 
     @Override
     public List<ValesListItemDTO> listDespachos() {
-        List<Vale> valeList =  valeRepository.getValeByActive(true);
-       /* System.out.println(valeList.size());
-        for (Vale vale : valeList) {
-            System.out.println("Vale: " + vale.getCodigo());
-            System.out.println("Objeto: " + (vale.getObjeto() != null ? vale.getObjeto().getCodigo() : "NULL"));
-        }*/
+        // Obtener vales activos ordenados por fecha descendente (más reciente primero)
+        List<Vale> valeList = valeRepository.getValeByActiveOrderByFechaDesc(true);
         return valeList.stream().map(this::mapEntityToListItem).toList();
     }
 
@@ -74,17 +72,65 @@ public class DespachosServicesImp implements IDespachosService {
 
     @Override
     public List<ValesListItemDTO> findDespachosByObraId(Long idObra) {
-        return valeRepository.getValesByObraId(idObra).stream().map(this::mapEntityToListItem).toList();
+        // Ordenar por fecha descendente (más reciente primero)
+        return valeRepository.getValesByObraIdOrderByFechaDesc(idObra).stream()
+                .map(this::mapEntityToListItem).toList();
     }
 
     @Override
     public List<ValesListItemDTO> findDespachosByEmpresaId(Long idEmp) {
-        return valeRepository.getValeByEmpresaId(idEmp).stream().map(this::mapEntityToListItem).toList();
+        // Ordenar por fecha descendente (más reciente primero)
+        return valeRepository.getValeByEmpresaIdOrderByFechaDesc(idEmp).stream()
+                .map(this::mapEntityToListItem).toList();
     }
 
     @Override
     public List<ValesListItemDTO> findDespachosByObjetosId(Long idObj) {
-        return valeRepository.getValesByObjetoId(idObj).stream().map(this::mapEntityToListItem).toList();
+        // Ordenar por fecha descendente (más reciente primero)
+        return valeRepository.getValesByObjetoIdOrderByFechaDesc(idObj).stream()
+                .map(this::mapEntityToListItem).toList();
+    }
+
+    /**
+     * Genera el siguiente código de despacho disponible de forma thread-safe.
+     * Formato: DSP-{AÑO}-{CONSECUTIVO_5_DIGITOS}
+     *
+     * Este método es transaccional para prevenir race conditions cuando
+     * múltiples usuarios crean despachos simultáneamente.
+     *
+     * @return El siguiente código disponible en formato DSP-2025-00001
+     */
+    @Override
+    @Transactional
+    public String generateNextCode() {
+        int añoActual = Year.now().getValue();
+        String prefijo = String.format("DSP-%d-", añoActual);
+
+        // Obtener todos los códigos del año actual
+        List<String> codigosDelAño = valeRepository.findAll().stream()
+                .map(Vale::getCodigo)
+                .filter(codigo -> codigo != null && codigo.startsWith(prefijo))
+                .toList();
+
+        // Encontrar el máximo consecutivo
+        int maxConsecutivo = codigosDelAño.stream()
+                .map(codigo -> {
+                    try {
+                        String[] partes = codigo.split("-");
+                        if (partes.length >= 3) {
+                            return Integer.parseInt(partes[2]);
+                        }
+                        return 0;
+                    } catch (NumberFormatException e) {
+                        return 0;
+                    }
+                })
+                .max(Integer::compareTo)
+                .orElse(0);
+
+        // Generar el nuevo consecutivo
+        int nuevoConsecutivo = maxConsecutivo + 1;
+        return String.format("%s%05d", prefijo, nuevoConsecutivo);
     }
 
 
