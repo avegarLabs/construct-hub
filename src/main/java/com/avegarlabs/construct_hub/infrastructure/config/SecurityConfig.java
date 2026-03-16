@@ -74,7 +74,7 @@ public class SecurityConfig {
                 "Origin",
                 "X-Requested-With"
         ));
-        configuration.setExposedHeaders(Arrays.asList("Authorization")); // Exponer el header de autenticación
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Disposition"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
