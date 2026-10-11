@@ -1,6 +1,7 @@
 package com.avegarlabs.construct_hub;
 
 import com.avegarlabs.construct_hub.application.dto.SignupRequest;
+import com.avegarlabs.construct_hub.application.services.IAppConfigService;
 import com.avegarlabs.construct_hub.application.services.UsuarioService;
 import com.avegarlabs.construct_hub.domain.model.Usuario;
 import com.avegarlabs.construct_hub.infrastructure.config.EnvLoader;
@@ -8,7 +9,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
 public class ConstructHubApplication {
@@ -20,7 +20,7 @@ public class ConstructHubApplication {
 
 
 	@Bean
-	CommandLineRunner init(UsuarioService usuarioService) {
+	CommandLineRunner init(UsuarioService usuarioService, IAppConfigService appConfigService) {
 		return args -> {
 			if (!usuarioService.existeUsuarioByUsername("admin")) {
 				SignupRequest admin = new SignupRequest();
@@ -31,6 +31,8 @@ public class ConstructHubApplication {
 				admin.setCargo("Administrador del Sistema");
 				usuarioService.crearUsuario(admin);
 			}
+
+			appConfigService.initDefaultConfigIfMissing();
 		};
 	}
 
